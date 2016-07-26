@@ -1,0 +1,39 @@
+notifications:
+  email:
+    recipients:
+      - CPAN-CI@leporine.io
+    on_success: change
+    on_failure: always
+
+# This is probably a net-loss for setup etc - a bare 'C' will likely fare much better
+language: perl
+
+os: linux
+dist: precise
+sudo: false
+
+perl:
+  - "5.24.0"
+
+env:
+  - WITH_LL="0"
+  - WITH_LL="1"
+
+install:
+  - export PERL_MM_USE_DEFAULT=1 HARNESS_OPTIONS=j10 MAKEFLAGS=-j10
+
+  - perlbrew install --as 5.24.0 --notest --noman -j10 perl-5.24.0
+  - perlbrew lib create 5.24.0@travis-local
+  - perlbrew use 5.24.0
+
+  # this line is not strictly necessary - it simply changes the exit of CPAN.pm
+  # from 0 to 1. The logged failure is there with or without it
+  - perl -MCPAN -e 'CPAN::Config->load; $CPAN::Config->{halt_on_failure} = 1; CPAN::Config->commit'
+
+before_script:
+  # this is what causes things to fail - without it all is well
+  - if [[ "$WITH_LL" == "1" ]] ; then perlbrew use 5.24.0@travis-local; fi
+
+script:
+  - perl -V
+  - cpan DBI DBD::SQLite
