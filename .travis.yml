@@ -22,6 +22,7 @@ env:
 install:
   - export PERL_MM_USE_DEFAULT=1 HARNESS_OPTIONS=j10 MAKEFLAGS=-j10
 
+  - perlbrew self-upgrade
   - perlbrew install --as 5.26.1_mine --notest --noman -j10 perl-5.26.1
   - perlbrew lib create 5.26.1_mine@travis-local
   - perlbrew use 5.26.1_mine
