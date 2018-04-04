@@ -29,6 +29,7 @@ install:
   # this line is not strictly necessary - it simply changes the exit of CPAN.pm
   # from 0 to 1. The logged failure is there with or without it
   - perl -MCPAN -e 'CPAN::Config->load; $CPAN::Config->{halt_on_failure} = 1; CPAN::Config->commit'
+  - cat /home/travis/.cpan/CPAN/MyConfig.pm
 
 before_script:
   # this is what causes things to fail - without it all is well
